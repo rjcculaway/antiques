@@ -1,0 +1,53 @@
+[gd_scene load_steps=8 format=3 uid="uid://b8thtaa0viu8g"]
+
+[ext_resource type="PackedScene" uid="uid://cs3pgt7rw6m4j" path="res://models/fence_wide.glb" id="1_56x6y"]
+[ext_resource type="PackedScene" uid="uid://b27oq7g3gvsss" path="res://models/road_straight.glb" id="1_wq8dl"]
+[ext_resource type="PackedScene" uid="uid://bem4w6jmlwafw" path="res://characterMedium.fbx" id="3_exti2"]
+[ext_resource type="Script" path="res://scenes/Player.gd" id="3_lr2j7"]
+[ext_resource type="PackedScene" uid="uid://d3kkljvh60eow" path="res://models/tree_large.glb" id="4_dua0y"]
+
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_ir21i"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_pjdmu"]
+
+[node name="Node3D" type="Node3D"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.977482, 0.209884, -0.0218424, -0.186269, 0.906846, 0.378066, 0.0991577, -0.365484, 0.925521, 0, 0, 0)
+light_color = Color(1, 0.85098, 0.819608, 1)
+light_energy = 0.5
+
+[node name="fence_wide2" parent="." instance=ExtResource("1_56x6y")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.75, 0, 0)
+
+[node name="Roads" type="StaticBody3D" parent="."]
+
+[node name="road_straight" parent="Roads" instance=ExtResource("1_wq8dl")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -0.725, 0, -1)
+
+[node name="road_straight2" parent="Roads" instance=ExtResource("1_wq8dl")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -0.725, 0, 0)
+
+[node name="road_straight3" parent="Roads" instance=ExtResource("1_wq8dl")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -0.725, 0, 1)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Roads"]
+shape = SubResource("WorldBoundaryShape3D_ir21i")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0.025, 0.25, 0)
+
+[node name="Player" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.476506, 0.0202556, -1.77636e-15)
+script = ExtResource("3_lr2j7")
+
+[node name="Root Scene" parent="Player" instance=ExtResource("3_exti2")]
+transform = Transform3D(0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
+transform = Transform3D(0.11, 0, 0, 0, 0.11, 0, 0, 0, 0.0673727, 0, 0.13, 0)
+shape = SubResource("CapsuleShape3D_pjdmu")
+
+[node name="tree_large2" parent="." groups=["behind"] instance=ExtResource("4_dua0y")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.468063, 0, -0.333576)
