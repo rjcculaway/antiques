@@ -1,0 +1,53 @@
+[gd_scene load_steps=6 format=3 uid="uid://cl1cwnsk6252u"]
+
+[ext_resource type="Script" path="res://scenes/Ghost.gd" id="1_nse5b"]
+[ext_resource type="Script" path="res://scenes/draggable.gd" id="2_51qes"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_g5rh6"]
+size = Vector3(0.1, 0.1, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nfwvs"]
+transparency = 1
+no_depth_test = true
+albedo_color = Color(1, 0, 1, 0)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_6u8gf"]
+margin = 0.0
+size = Vector3(0.1, 0.1, 0.1)
+
+[node name="Antique" type="Node3D"]
+script = ExtResource("2_51qes")
+
+[node name="Ghost" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.30117, 0.898533, -0.00618629)
+visible = false
+layers = 2
+mesh = SubResource("BoxMesh_g5rh6")
+skeleton = NodePath("")
+surface_material_override/0 = SubResource("StandardMaterial3D_nfwvs")
+script = ExtResource("1_nse5b")
+
+[node name="Timer" type="Timer" parent="Ghost"]
+unique_name_in_owner = true
+process_callback = 0
+wait_time = 5.0
+one_shot = true
+
+[node name="RigidBody3D" type="RigidBody3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.30117, 0.898533, -0.00618629)
+input_capture_on_drag = true
+axis_lock_linear_z = true
+axis_lock_angular_x = true
+axis_lock_angular_y = true
+axis_lock_angular_z = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
+shape = SubResource("BoxShape3D_6u8gf")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBody3D"]
+layers = 2
+mesh = SubResource("BoxMesh_g5rh6")
+
+[connection signal="input_event" from="RigidBody3D" to="RigidBody3D" method="_on_input_event"]

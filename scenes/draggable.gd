@@ -1,9 +1,10 @@
 extends Node3D
 class_name Draggable
 
-@export var rigid_body: RigidBody3D
 @export var camera: Camera3DRayCaster
-@export var ghost_mesh: GhostMesh
+
+@onready var rigid_body: RigidBody3D = %RigidBody3D
+@onready var ghost_mesh: MeshInstance3D = %Ghost
 
 var is_dragged: bool = false
 
@@ -23,6 +24,12 @@ func _physics_process(delta):
 			is_dragged = true
 			rigid_body.freeze = true
 
+			# Spawn a ghost if the new position is very different from the original position
+			if not ghost_mesh.visible:
+				var current_local_position: Vector3 = rigid_body.position
+				ghost_mesh.position = current_local_position
+				ghost_mesh.activate()
+
 	if is_dragged:
 		var current_position: Vector3 = rigid_body.global_position
 
@@ -35,12 +42,22 @@ func _physics_process(delta):
 		var influence: Vector3 = final_position - current_position
 		influence.z = current_position.z
 		rigid_body.move_and_collide(influence)
-
-		# Spawn a ghost if the new position is very different from the original position
-		if current_position.distance_squared_to(final_position) > 0.01 and not ghost_mesh.visible:
-			ghost_mesh.translate(current_position)
-			ghost_mesh.activate()
 			
 	if Input.is_action_just_released("object_drag"):
 		is_dragged = false
 		rigid_body.freeze = false
+
+func move_by_poltergeist(influence):
+	# rigid_body.freeze = true
+
+	if not ghost_mesh.visible:
+		var current_local_position: Vector3 = rigid_body.position
+		ghost_mesh.position = current_local_position
+		ghost_mesh.activate()
+
+	var current_position: Vector3 = rigid_body.global_position
+
+	influence.z = current_position.z
+	rigid_body.apply_impulse(influence)
+
+	# rigid_body.freeze = false

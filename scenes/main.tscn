@@ -1,9 +1,8 @@
-[gd_scene load_steps=12 format=3 uid="uid://b8thtaa0viu8g"]
+[gd_scene load_steps=10 format=3 uid="uid://b8thtaa0viu8g"]
 
 [ext_resource type="Script" path="res://scenes/main.gd" id="1_prcix"]
 [ext_resource type="Script" path="res://scenes/camera.gd" id="2_gh4uu"]
-[ext_resource type="Script" path="res://scenes/draggable.gd" id="2_uluki"]
-[ext_resource type="Script" path="res://scenes/Ghost.gd" id="4_fjk8v"]
+[ext_resource type="PackedScene" uid="uid://cl1cwnsk6252u" path="res://scenes/antique.tscn" id="3_qwy8j"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7roka"]
 
@@ -50,11 +49,6 @@ size = Vector3(0.1, 0.1, 0.1)
 [sub_resource type="BoxMesh" id="BoxMesh_g5rh6"]
 size = Vector3(0.1, 0.1, 0.1)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nfwvs"]
-transparency = 1
-no_depth_test = true
-albedo_color = Color(1, 0, 1, 0)
-
 [node name="Main" type="Node3D"]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0)
 script = ExtResource("1_prcix")
@@ -84,17 +78,6 @@ shape = SubResource("BoxShape3D_6u8gf")
 layers = 2
 mesh = SubResource("BoxMesh_g5rh6")
 
-[node name="Cube3" type="RigidBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.30455, 0.886963, -0.550587)
-input_capture_on_drag = true
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Cube3"]
-shape = SubResource("BoxShape3D_6u8gf")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Cube3"]
-layers = 2
-mesh = SubResource("BoxMesh_g5rh6")
-
 [node name="BackBufferCopy" type="BackBufferCopy" parent="."]
 rect = Rect2(0, 0, 1152, 648)
 
@@ -105,38 +88,12 @@ current = true
 fov = 30.0
 script = ExtResource("2_gh4uu")
 
-[node name="Node3D" type="Node3D" parent="."]
+[node name="Antique" parent="." node_paths=PackedStringArray("camera") groups=["antiques"] instance=ExtResource("3_qwy8j")]
+camera = NodePath("../Camera3D")
 
-[node name="Ghost" type="MeshInstance3D" parent="Node3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.30117, 0.898533, -0.00618629)
-visible = false
-layers = 2
-mesh = SubResource("BoxMesh_g5rh6")
-skeleton = NodePath("")
-surface_material_override/0 = SubResource("StandardMaterial3D_nfwvs")
-script = ExtResource("4_fjk8v")
-min_opacity = null
-max_opacity = null
+[node name="PoltergeistTimer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 5.0
+autostart = true
 
-[node name="Cube" type="RigidBody3D" parent="Node3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.30117, 0.898533, -0.00618629)
-input_capture_on_drag = true
-axis_lock_linear_z = true
-axis_lock_angular_x = true
-axis_lock_angular_y = true
-axis_lock_angular_z = true
-
-[node name="Draggable" type="Node3D" parent="Node3D/Cube" node_paths=PackedStringArray("rigid_body", "camera", "ghost_mesh")]
-script = ExtResource("2_uluki")
-rigid_body = NodePath("..")
-camera = NodePath("../../../Camera3D")
-ghost_mesh = NodePath("../../Ghost")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Node3D/Cube"]
-shape = SubResource("BoxShape3D_6u8gf")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Node3D/Cube"]
-layers = 2
-mesh = SubResource("BoxMesh_g5rh6")
-
-[connection signal="input_event" from="Node3D/Cube" to="Node3D/Cube" method="_on_input_event"]
+[connection signal="timeout" from="PoltergeistTimer" to="." method="_on_poltergeist_timer_timeout"]
