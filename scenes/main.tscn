@@ -1,8 +1,19 @@
-[gd_scene load_steps=8 format=3 uid="uid://b8thtaa0viu8g"]
+[gd_scene load_steps=11 format=3 uid="uid://b8thtaa0viu8g"]
 
 [ext_resource type="Script" path="res://scenes/main.gd" id="1_prcix"]
 [ext_resource type="Script" path="res://scenes/camera.gd" id="2_gh4uu"]
+[ext_resource type="Script" path="res://scenes/Eyesight.gd" id="3_lqro4"]
 [ext_resource type="PackedScene" uid="uid://cl1cwnsk6252u" path="res://scenes/antique.tscn" id="3_qwy8j"]
+
+[sub_resource type="Environment" id="Environment_8mwpc"]
+background_mode = 2
+ambient_light_source = 1
+tonemap_mode = 3
+ssao_enabled = true
+ssil_enabled = true
+sdfgi_enabled = true
+
+[sub_resource type="CameraAttributesPhysical" id="CameraAttributesPhysical_wf8s2"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7roka"]
 
@@ -46,7 +57,29 @@ data = PackedVector3Array(0.615, 0, -0.95, 1, 0, -1, 0.615, 0, -1, 0.615, 0, -0.
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0)
 script = ExtResource("1_prcix")
 
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_8mwpc")
+camera_attributes = SubResource("CameraAttributesPhysical_wf8s2")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 3.275, 1, 4.37114e-08)
+current = true
+fov = 30.0
+script = ExtResource("2_gh4uu")
+
+[node name="Eyesight" type="SpotLight3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.770314, 0.585, 1.76216e-09)
+light_energy = 0.25
+shadow_enabled = true
+spot_range = 1.454
+spot_attenuation = 1.51571
+spot_angle = 19.69
+spot_angle_attenuation = 0.233259
+script = ExtResource("3_lqro4")
+
 [node name="RigidBody3D" type="StaticBody3D" parent="."]
+unique_name_in_owner = true
 
 [node name="Shelf" type="MeshInstance3D" parent="RigidBody3D"]
 transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 1, 0)
@@ -59,16 +92,10 @@ shape = SubResource("ConcavePolygonShape3D_xwjlj")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.369747, -0.895341, 0.2483, 0, 0.267238, 0.96363, -0.929133, 0.356299, -0.0988105, 0, 10, 0)
+visible = false
 
 [node name="BackBufferCopy" type="BackBufferCopy" parent="."]
 rect = Rect2(0, 0, 1152, 648)
-
-[node name="Camera3D" type="Camera3D" parent="."]
-unique_name_in_owner = true
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 2.275, 1, 0)
-current = true
-fov = 30.0
-script = ExtResource("2_gh4uu")
 
 [node name="PoltergeistTimer" type="Timer" parent="."]
 process_callback = 0
