@@ -1,0 +1,34 @@
+[gd_resource type="VisualShader" load_steps=3 format=3 uid="uid://de3wk2nip3s31"]
+
+[sub_resource type="VisualShaderNodeColorParameter" id="VisualShaderNodeColorParameter_1owyp"]
+parameter_name = "ColorParameter"
+default_value_enabled = true
+default_value = Color(1, 0, 1, 1)
+
+[sub_resource type="VisualShaderNodeFresnel" id="VisualShaderNodeFresnel_8yt0r"]
+default_input_values = [2, false, 3, 5.0]
+
+[resource]
+code = "shader_type spatial;
+render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_lambert, specular_schlick_ggx;
+
+
+
+
+void fragment() {
+// Fresnel:4
+	float n_in4p3 = 5.00000;
+	float n_out4p0 = pow(1.0 - clamp(dot(NORMAL, VIEW), 0.0, 1.0), n_in4p3);
+
+
+// Output:0
+	RIM = n_out4p0;
+
+
+}
+"
+nodes/fragment/2/node = SubResource("VisualShaderNodeColorParameter_1owyp")
+nodes/fragment/2/position = Vector2(-340, 360)
+nodes/fragment/4/node = SubResource("VisualShaderNodeFresnel_8yt0r")
+nodes/fragment/4/position = Vector2(-340, 220)
+nodes/fragment/connections = PackedInt32Array(4, 0, 0, 11)

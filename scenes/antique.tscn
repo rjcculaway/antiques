@@ -1,12 +1,14 @@
-[gd_scene load_steps=6 format=3 uid="uid://cl1cwnsk6252u"]
+[gd_scene load_steps=8 format=3 uid="uid://cl1cwnsk6252u"]
 
 [ext_resource type="Script" path="res://scenes/Ghost.gd" id="1_nse5b"]
 [ext_resource type="Script" path="res://scenes/draggable.gd" id="2_51qes"]
+[ext_resource type="Shader" uid="uid://dx5bap4fpdr1s" path="res://scenes/draggable_candidate_shader.tres" id="3_jv3kb"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_g5rh6"]
 size = Vector3(0.1, 0.1, 0.1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nfwvs"]
+resource_local_to_scene = true
 transparency = 1
 no_depth_test = true
 albedo_color = Color(1, 0, 1, 0)
@@ -15,7 +17,11 @@ albedo_color = Color(1, 0, 1, 0)
 margin = 0.0
 size = Vector3(0.1, 0.1, 0.1)
 
-[node name="Antique" type="Node3D"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6kvsl"]
+render_priority = 0
+shader = ExtResource("3_jv3kb")
+
+[node name="Antique" type="Node3D" groups=["antiques"]]
 script = ExtResource("2_51qes")
 
 [node name="Ghost" type="MeshInstance3D" parent="."]
@@ -47,7 +53,10 @@ axis_lock_angular_z = true
 shape = SubResource("BoxShape3D_6u8gf")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBody3D"]
+unique_name_in_owner = true
 layers = 2
+material_overlay = SubResource("ShaderMaterial_6kvsl")
+instance_shader_parameters/is_for_selection = false
 mesh = SubResource("BoxMesh_g5rh6")
 
 [connection signal="input_event" from="RigidBody3D" to="RigidBody3D" method="_on_input_event"]

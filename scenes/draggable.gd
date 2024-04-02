@@ -24,12 +24,6 @@ func _physics_process(delta):
 			is_dragged = true
 			rigid_body.freeze = true
 
-			# Spawn a ghost if the new position is very different from the original position
-			if not ghost_mesh.visible:
-				var current_local_position: Vector3 = rigid_body.position
-				ghost_mesh.position = current_local_position
-				ghost_mesh.activate()
-
 	if is_dragged:
 		var current_position: Vector3 = rigid_body.global_position
 
@@ -47,17 +41,31 @@ func _physics_process(delta):
 		is_dragged = false
 		rigid_body.freeze = false
 
+	# Spawn a ghost if the new position is very different from the original position
+	if not ghost_mesh.visible and rigid_body.constant_force.length_squared() > 1:
+		var current_local_position: Vector3 = rigid_body.position
+		ghost_mesh.position = current_local_position
+		ghost_mesh.activate()
+
+func select_for_haunt():
+	%RigidBody3D/MeshInstance3D.set_instance_shader_parameter("is_for_selection", true)
+
+func deselect_for_haunt():
+	%RigidBody3D/MeshInstance3D.set_instance_shader_parameter("is_for_selection", false)
+
 func move_by_poltergeist(influence):
 	# rigid_body.freeze = true
+
+	var current_position: Vector3 = rigid_body.global_position
+
+	influence.z = current_position.z
+	rigid_body.apply_impulse(influence)
 
 	if not ghost_mesh.visible:
 		var current_local_position: Vector3 = rigid_body.position
 		ghost_mesh.position = current_local_position
 		ghost_mesh.activate()
 
-	var current_position: Vector3 = rigid_body.global_position
-
-	influence.z = current_position.z
-	rigid_body.apply_impulse(influence)
+	deselect_for_haunt()
 
 	# rigid_body.freeze = false
