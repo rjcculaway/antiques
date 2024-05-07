@@ -5,6 +5,7 @@ class_name Draggable
 
 @onready var rigid_body: RigidBody3D = %RigidBody3D
 @onready var ghost_mesh: MeshInstance3D = %Ghost
+@onready var original_orientation: Quaternion = Quaternion.from_euler(rigid_body.rotation).normalized()
 
 var is_dragged: bool = false
 
@@ -14,15 +15,19 @@ func _ready():
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _process(_delta):
 	pass
 
-func _physics_process(delta):
+func _physics_process(_delta):
 	if Input.is_action_just_pressed("object_drag"):
 		var ray_cast_result = camera.ray_cast()
 		if ray_cast_result == rigid_body:
 			is_dragged = true
 			rigid_body.freeze = true
+
+			# Reset rotation of object to original
+			var tween = get_tree().create_tween()
+			tween.tween_property(rigid_body, "quaternion", original_orientation, 0.25)
 
 	if is_dragged:
 		var current_position: Vector3 = rigid_body.global_position
@@ -41,11 +46,17 @@ func _physics_process(delta):
 		is_dragged = false
 		rigid_body.freeze = false
 
-	# Spawn a ghost if the new position is very different from the original position
-	if not ghost_mesh.visible and rigid_body.constant_force.length_squared() > 1:
+func show_object() -> void:
+	%RigidBody3D.visible = true
+	ghost_mesh.visible = false
+
+func hide_object() -> void:
+	if %RigidBody3D.visible:
 		var current_local_position: Vector3 = rigid_body.position
 		ghost_mesh.position = current_local_position
 		ghost_mesh.activate()
+
+	%RigidBody3D.visible = false
 
 func select_for_haunt():
 	%RigidBody3D/MeshInstance3D.set_instance_shader_parameter("is_for_selection", true)
@@ -61,11 +72,9 @@ func move_by_poltergeist(influence):
 	influence.z = current_position.z
 	rigid_body.apply_impulse(influence)
 
-	if not ghost_mesh.visible:
-		var current_local_position: Vector3 = rigid_body.position
-		ghost_mesh.position = current_local_position
-		ghost_mesh.activate()
+	# if not ghost_mesh.visible:
+	# 	var current_local_position: Vector3 = rigid_body.position
+	# 	ghost_mesh.position = current_local_position
+	# 	ghost_mesh.activate()
 
 	deselect_for_haunt()
-
-	# rigid_body.freeze = false
