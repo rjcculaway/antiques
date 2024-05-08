@@ -17,7 +17,7 @@ func _physics_process(_delta):
 		var mouse_position: Vector2 = get_viewport().get_mouse_position()
 		var from: Vector3 = camera.project_ray_origin(mouse_position)
 		var to: Vector3 = camera.project_ray_normal(mouse_position)
-		var depth: float = from.distance_to(%RigidBody3D.global_position)
+		var depth: float = from.distance_to(%Shelf.global_position)
 		var final_position: Vector3 = from + to * depth
 		global_position = Vector3(final_position.x, final_position.y, global_position.z)
 

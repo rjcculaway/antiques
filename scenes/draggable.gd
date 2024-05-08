@@ -58,13 +58,13 @@ func hide_object() -> void:
 
 	%RigidBody3D.visible = false
 
-func select_for_haunt():
+func select_for_haunt() -> void:
 	%RigidBody3D/MeshInstance3D.set_instance_shader_parameter("is_for_selection", true)
 
-func deselect_for_haunt():
+func deselect_for_haunt() -> void:
 	%RigidBody3D/MeshInstance3D.set_instance_shader_parameter("is_for_selection", false)
 
-func move_by_poltergeist(influence):
+func move_by_poltergeist(influence) -> void:
 	# rigid_body.freeze = true
 
 	var current_position: Vector3 = rigid_body.global_position

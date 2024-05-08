@@ -1,17 +1,16 @@
-[gd_scene load_steps=8 format=3 uid="uid://cl1cwnsk6252u"]
+[gd_scene load_steps=9 format=3 uid="uid://cl1cwnsk6252u"]
 
 [ext_resource type="Script" path="res://scenes/Ghost.gd" id="1_nse5b"]
+[ext_resource type="Shader" uid="uid://dxvcmrf1skkm3" path="res://scenes/shaders/ghost.tres" id="2_048p6"]
 [ext_resource type="Script" path="res://scenes/draggable.gd" id="2_51qes"]
 [ext_resource type="Shader" uid="uid://dx5bap4fpdr1s" path="res://scenes/draggable_candidate_shader.tres" id="3_jv3kb"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_g5rh6"]
 size = Vector3(0.1, 0.1, 0.1)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nfwvs"]
-resource_local_to_scene = true
-transparency = 1
-no_depth_test = true
-albedo_color = Color(1, 0, 1, 0)
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_b264x"]
+render_priority = 0
+shader = ExtResource("2_048p6")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_6u8gf"]
 margin = 0.0
@@ -28,9 +27,12 @@ script = ExtResource("2_51qes")
 unique_name_in_owner = true
 visible = false
 layers = 2
+instance_shader_parameters/Maximum_Opacity = 1.0
+instance_shader_parameters/Period = 10.0
+instance_shader_parameters/Time_Scale = 1.0
 mesh = SubResource("BoxMesh_g5rh6")
 skeleton = NodePath("")
-surface_material_override/0 = SubResource("StandardMaterial3D_nfwvs")
+surface_material_override/0 = SubResource("ShaderMaterial_b264x")
 script = ExtResource("1_nse5b")
 
 [node name="Timer" type="Timer" parent="Ghost"]
@@ -41,6 +43,7 @@ one_shot = true
 
 [node name="RigidBody3D" type="RigidBody3D" parent="."]
 unique_name_in_owner = true
+visible = false
 input_capture_on_drag = true
 axis_lock_linear_z = true
 
