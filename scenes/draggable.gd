@@ -5,7 +5,7 @@ class_name Draggable
 
 @onready var rigid_body: RigidBody3D = %RigidBody3D
 @onready var ghost_mesh: MeshInstance3D = %Ghost
-@onready var original_orientation: Quaternion = Quaternion.from_euler(rigid_body.rotation).normalized()
+@onready var original_orientation: Quaternion = rigid_body.quaternion
 
 var is_dragged: bool = false
 

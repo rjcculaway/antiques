@@ -1,4 +1,4 @@
-[gd_resource type="VisualShader" load_steps=19 format=3 uid="uid://dxvcmrf1skkm3"]
+[gd_resource type="VisualShader" load_steps=18 format=3 uid="uid://dxvcmrf1skkm3"]
 
 [sub_resource type="VisualShaderNodeFloatParameter" id="VisualShaderNodeFloatParameter_s4mlr"]
 parameter_name = "Period"
@@ -13,7 +13,7 @@ input_name = "vertex"
 input_name = "view_matrix"
 
 [sub_resource type="VisualShaderNodeVectorCompose" id="VisualShaderNodeVectorCompose_nmwc5"]
-default_input_values = [0, 0.0, 1, 0.0, 2, 0.0, 3, 1.0]
+default_input_values = [0, 0.0, 1, 0.0, 2, 0.0, 3, 0.0]
 op_type = 2
 
 [sub_resource type="VisualShaderNodeVectorDecompose" id="VisualShaderNodeVectorDecompose_mppb6"]
@@ -42,7 +42,7 @@ default_value = 1.0
 default_input_values = [1, -1.0, 2, 1.0, 3, 0.0, 4, 0.5]
 
 [sub_resource type="VisualShaderNodeMix" id="VisualShaderNodeMix_5ijar"]
-default_input_values = [0, Vector3(1, 1, 1), 1, Vector3(0, 0, 0), 2, Vector3(0.5, 0.5, 0.5)]
+default_input_values = [0, Vector3(0, 0, 0), 1, Vector3(0, 0, 0), 2, Vector3(0.5, 0.5, 0.5)]
 op_type = 3
 
 [sub_resource type="VisualShaderNodeColorParameter" id="VisualShaderNodeColorParameter_aaigh"]
@@ -53,9 +53,6 @@ default_value = Color(0.141176, 1, 0.662745, 1)
 
 [sub_resource type="VisualShaderNodeFresnel" id="VisualShaderNodeFresnel_klbie"]
 default_input_values = [2, false, 3, 2.0]
-
-[sub_resource type="VisualShaderNodeFloatOp" id="VisualShaderNodeFloatOp_owg72"]
-operator = 2
 
 [sub_resource type="VisualShaderNodeFloatFunc" id="VisualShaderNodeFloatFunc_64qmd"]
 function = 0
@@ -70,18 +67,14 @@ operator = 2
 code = "shader_type spatial;
 render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_lambert, specular_schlick_ggx;
 
-instance uniform vec4 ColorParameter : source_color = vec4(0.141176, 1.000000, 0.662745, 1.000000);
 instance uniform float Period = 10;
 instance uniform float Time_Scale = 1;
 instance uniform float Maximum_Opacity = 1;
+instance uniform vec4 ColorParameter : source_color = vec4(0.141176, 1.000000, 0.662745, 1.000000);
 
 
 
 void fragment() {
-// ColorParameter:24
-	vec4 n_out24p0 = ColorParameter;
-
-
 // Input:14
 	mat4 n_out14p0 = VIEW_MATRIX;
 
@@ -97,7 +90,7 @@ void fragment() {
 
 
 // VectorCompose:15
-	float n_in15p3 = 1.00000;
+	float n_in15p3 = 0.00000;
 	vec4 n_out15p0 = vec4(n_out16p0, n_out16p1, n_out16p2, n_in15p3);
 
 
@@ -133,38 +126,46 @@ void fragment() {
 	float n_out4p0 = sin(n_out19p0);
 
 
+// FloatParameter:2
+	float n_out2p0 = Maximum_Opacity;
+
+
 	float n_out22p0;
 // Remap:22
 	float n_in22p1 = -1.00000;
 	float n_in22p2 = 1.00000;
 	float n_in22p3 = 0.00000;
-	float n_in22p4 = 0.50000;
 	{
 		float __input_range = n_in22p2 - n_in22p1;
-		float __output_range = n_in22p4 - n_in22p3;
+		float __output_range = n_out2p0 - n_in22p3;
 		n_out22p0 = n_in22p3 + __output_range * ((n_out4p0 - n_in22p1) / __input_range);
 	}
 
 
+// ColorParameter:24
+	vec4 n_out24p0 = ColorParameter;
+
+
+// Fresnel:25
+	float n_in25p3 = 2.00000;
+	float n_out25p0 = pow(1.0 - clamp(dot(NORMAL, VIEW), 0.0, 1.0), n_in25p3);
+
+
 // Mix:23
-	vec3 n_in23p0 = vec3(1.00000, 1.00000, 1.00000);
-	vec3 n_out23p0 = mix(n_in23p0, vec3(n_out24p0.xyz), vec3(n_out22p0));
-
-
-// FloatParameter:2
-	float n_out2p0 = Maximum_Opacity;
+	vec3 n_in23p0 = vec3(0.00000, 0.00000, 0.00000);
+	vec3 n_out23p0 = mix(n_in23p0, vec3(n_out24p0.xyz), vec3(n_out25p0));
 
 
 // Output:0
-	ALBEDO = n_out23p0;
-	ALPHA = n_out2p0;
+	ALPHA = n_out22p0;
+	EMISSION = n_out23p0;
 
 
 }
 "
-graph_offset = Vector2(-653.517, 51.636)
+graph_offset = Vector2(-987.245, 312.735)
 nodes/fragment/2/node = SubResource("VisualShaderNodeFloatParameter_w5k43")
-nodes/fragment/2/position = Vector2(-260, 20)
+nodes/fragment/2/position = Vector2(-1060, 500)
 nodes/fragment/4/node = SubResource("VisualShaderNodeFloatFunc_64qmd")
 nodes/fragment/4/position = Vector2(-1000, 400)
 nodes/fragment/6/node = SubResource("VisualShaderNodeInput_kw6jc")
@@ -190,13 +191,11 @@ nodes/fragment/20/position = Vector2(-1760, 560)
 nodes/fragment/21/node = SubResource("VisualShaderNodeFloatParameter_iqr0t")
 nodes/fragment/21/position = Vector2(-2140, 580)
 nodes/fragment/22/node = SubResource("VisualShaderNodeRemap_ytudb")
-nodes/fragment/22/position = Vector2(-760, 340)
+nodes/fragment/22/position = Vector2(-620, 300)
 nodes/fragment/23/node = SubResource("VisualShaderNodeMix_5ijar")
-nodes/fragment/23/position = Vector2(-20, 240)
+nodes/fragment/23/position = Vector2(-60, 140)
 nodes/fragment/24/node = SubResource("VisualShaderNodeColorParameter_aaigh")
-nodes/fragment/24/position = Vector2(-380, 160)
+nodes/fragment/24/position = Vector2(-400, 80)
 nodes/fragment/25/node = SubResource("VisualShaderNodeFresnel_klbie")
-nodes/fragment/25/position = Vector2(-780, 520)
-nodes/fragment/26/node = SubResource("VisualShaderNodeFloatOp_owg72")
-nodes/fragment/26/position = Vector2(-240, 360)
-nodes/fragment/connections = PackedInt32Array(10, 0, 9, 1, 13, 0, 16, 0, 16, 0, 15, 0, 16, 1, 15, 1, 16, 2, 15, 2, 15, 0, 18, 1, 14, 0, 18, 0, 18, 0, 9, 0, 19, 0, 4, 0, 9, 0, 19, 0, 20, 0, 19, 1, 6, 0, 20, 0, 21, 0, 20, 1, 2, 0, 0, 1, 4, 0, 22, 0, 25, 0, 26, 0, 23, 0, 0, 0, 24, 0, 23, 1, 22, 0, 26, 1, 22, 0, 23, 2)
+nodes/fragment/25/position = Vector2(-680, 500)
+nodes/fragment/connections = PackedInt32Array(10, 0, 9, 1, 13, 0, 16, 0, 16, 0, 15, 0, 16, 1, 15, 1, 16, 2, 15, 2, 15, 0, 18, 1, 14, 0, 18, 0, 18, 0, 9, 0, 19, 0, 4, 0, 9, 0, 19, 0, 20, 0, 19, 1, 6, 0, 20, 0, 21, 0, 20, 1, 4, 0, 22, 0, 2, 0, 22, 4, 23, 0, 0, 5, 25, 0, 23, 2, 24, 0, 23, 1, 22, 0, 0, 1)

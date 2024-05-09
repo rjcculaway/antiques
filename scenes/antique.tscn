@@ -6,26 +6,24 @@
 [ext_resource type="Shader" uid="uid://dx5bap4fpdr1s" path="res://scenes/draggable_candidate_shader.tres" id="3_jv3kb"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_g5rh6"]
-size = Vector3(0.1, 0.1, 0.1)
+size = Vector3(0.125, 0.125, 0.125)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_b264x"]
 render_priority = 0
 shader = ExtResource("2_048p6")
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_6u8gf"]
-margin = 0.0
-size = Vector3(0.1, 0.1, 0.1)
-
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_6kvsl"]
 render_priority = 0
 shader = ExtResource("3_jv3kb")
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_wckq5"]
+points = PackedVector3Array(0.0625, 0.0625, 0.0625, 0.0625, 0.0625, -0.0625, -0.0625, 0.0625, 0.0625, 0.0625, -0.0625, 0.0625, 0.0625, -0.0625, -0.0625, -0.0625, 0.0625, -0.0625, -0.0625, -0.0625, 0.0625, -0.0625, -0.0625, -0.0625)
 
 [node name="Antique" type="Node3D" groups=["antiques"]]
 script = ExtResource("2_51qes")
 
 [node name="Ghost" type="MeshInstance3D" parent="."]
 unique_name_in_owner = true
-visible = false
 layers = 2
 instance_shader_parameters/Maximum_Opacity = 1.0
 instance_shader_parameters/Period = 10.0
@@ -47,14 +45,15 @@ visible = false
 input_capture_on_drag = true
 axis_lock_linear_z = true
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
-shape = SubResource("BoxShape3D_6u8gf")
-
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBody3D"]
 unique_name_in_owner = true
 layers = 2
 material_overlay = SubResource("ShaderMaterial_6kvsl")
+instance_shader_parameters/Indicator_Color = Color(0.117647, 0.639216, 0.729412, 1)
 instance_shader_parameters/is_for_selection = false
 mesh = SubResource("BoxMesh_g5rh6")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
+shape = SubResource("ConvexPolygonShape3D_wckq5")
 
 [connection signal="input_event" from="RigidBody3D" to="RigidBody3D" method="_on_input_event"]
